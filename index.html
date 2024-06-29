@@ -151,7 +151,7 @@
 							error.classList.add("right");
                             error.innerHTML = `Error: The sesstion could not be created.`;
                          })
-                    } else {
+                    } else if(!window.ai) {
 						const error = bubble();
 						error.classList.add("error");
 						error.classList.add("right");
