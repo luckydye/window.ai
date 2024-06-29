@@ -1,0 +1,160 @@
+<html>
+    <body>
+        <style>
+            body {
+                background: #1c1c1f;
+                color: white;
+                font-family: sans-serif;
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            main {
+                padding: 2rem;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+                box-sizing: border-box;
+                gap: 1rem;
+            }
+
+            textarea {
+                font-size: 16px;
+                font-family: sans-serif;
+                padding: 0.5rem;
+                background: hsl(240 5% 32% / 1);
+                color: white;
+                border-radius: 4px;
+                width: 100%;
+            }
+
+            .bubble-content {
+                background: #3e3e4c;
+                border-radius: 8px;
+                padding: 1rem;
+                display: inline-block;
+                max-width: 90%;
+                margin: 10px 0;
+            }
+
+            .bubble {
+                display: grid;
+            }
+
+            .bubble-input {
+                background: #3e3e4c;
+                border-radius: 8px;
+                padding: 1rem;
+                display: inline-block;
+            }
+
+            .left {
+                justify-self: left;
+            }
+
+            .right {
+                justify-self: right;
+            }
+
+            pre {
+                display: inline;
+            }
+
+            a[href] {
+                color: white;
+            }
+
+            #chat {
+                padding: 1rem 2rem;
+                height: 100%;
+                box-sizing: border-box;
+                overflow: auto;
+            }
+        </style>
+
+        <main>
+            <div id="chat">
+                <div>
+                    <h1>Gemini Nano</h1>
+                </div>
+            </div>
+
+            <div>
+                <textarea
+                    placeholder="Ask something"
+                    autofocus
+                    id="input"
+                    rows="4"
+                ></textarea>
+            </div>
+        </main>
+
+        <script type="module">
+            const session = await ai.createTextSession();
+
+            function bubble() {
+                const ele1 = document.createElement("div");
+                const ele2 = document.createElement("div");
+                ele1.className = "bubble";
+                ele2.className = "bubble-content";
+                ele1.append(ele2);
+                chat.append(ele1);
+                return ele2;
+            }
+
+            function append(input, outputStream) {
+                const ele1 = bubble();
+                ele1.classList.add("left");
+                ele1.innerText = input;
+
+                const ele2 = bubble();
+                ele2.classList.add("right");
+                ele2.innerText = input;
+
+                outputStream.pipeTo(
+                    new WritableStream({
+                        write(str) {
+                            ele2.innerText = str;
+
+                            if (
+                                chat.scrollTop + chat.offsetHeight >=
+                                chat.scrollHeight - 40
+                            ) {
+                                chat.scrollTo(0, chat.scrollHeight);
+                            }
+                        },
+                    }),
+                );
+
+                ele2.scrollIntoView();
+            }
+
+            input.addEventListener("keydown", async (e) => {
+                const inputString = input.value.trim();
+                if (e.key === "Enter" && inputString != "") {
+                    e.preventDefault();
+                    const stream = await session.promptStreaming(inputString);
+                    append(inputString, stream);
+                    input.value = "";
+                }
+            });
+
+            const intro = bubble();
+            intro.classList.add("right");
+            intro.innerHTML = `To get started:
+              <br/>
+              Enable Gemini Nano in Google Chrome (Canary). You need to be on version 128 of chrome or higher.
+              <br/><br/>
+              Additionally, the flags <a target="_blank" href="chrome://flags/#prompt-api-for-gemini-nano"><pre>#prompt-api-for-gemini-nano</pre></a>
+              and <a target="_blank" href="chrome://flags/#optimization-guide-on-device-model"><pre>#optimization-guide-on-device-model</pre></a> need to be set to "<pre>Enabled</pre>" and "<pre>Enabled BypassPerfRequirement</pre>".
+              <br/><br/>
+              After thats done, head to <a target="_blank" href="chrome://components/"><pre>chrome://components/</pre></a> and check for updates on "<pre>Optimization Guide On Device Model</pre>".
+            `;
+        </script>
+    </body>
+</html>
