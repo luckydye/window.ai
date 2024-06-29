@@ -143,7 +143,7 @@
                 if (e.key === "Enter" && inputString != "") {
                     e.preventDefault();
                     
-                    if(window.ai) {
+                    if(window.ai && !session) {
                          session = await ai.createTextSession().catch(err => {
 							console.error(err);
 							const error = bubble();
