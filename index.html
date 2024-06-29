@@ -42,6 +42,10 @@
                 margin: 10px 0;
             }
 
+            .error {
+                background: #4c3e43;
+            }
+
             .bubble {
                 display: grid;
             }
@@ -95,7 +99,7 @@
         </main>
 
         <script type="module">
-            const session = await ai.createTextSession();
+            let session;
 
             function bubble() {
                 const ele1 = document.createElement("div");
@@ -116,7 +120,7 @@
                 ele2.classList.add("right");
                 ele2.innerText = input;
 
-                outputStream.pipeTo(
+                outputStream?.pipeTo(
                     new WritableStream({
                         write(str) {
                             ele2.innerText = str;
@@ -138,9 +142,25 @@
                 const inputString = input.value.trim();
                 if (e.key === "Enter" && inputString != "") {
                     e.preventDefault();
-                    const stream = await session.promptStreaming(inputString);
-                    append(inputString, stream);
-                    input.value = "";
+                    
+                    if(window.ai) {
+                         session = await ai.createTextSession().catch(err => {
+													 	console.error(err);
+												 		const error = bubble();
+                            error.classList.add("right error");
+                            error.innerHTML = `Error: The sesstion could not be created.`;
+                         })
+                    } else {
+                        const err = bubble();
+                        error.classList.add("right error");
+                        error.innerHTML = `Error: Gemini Nano is not suppoerted in this browser.`;
+                    }
+                    
+                    if(session) {
+                        const stream = await session.promptStreaming(inputString);
+                        append(inputString, stream);
+                        input.value = "";
+                    }
                 }
             });
 
