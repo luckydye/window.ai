@@ -145,15 +145,17 @@
                     
                     if(window.ai) {
                          session = await ai.createTextSession().catch(err => {
-														console.error(err);
-														const error = bubble();
-                            error.classList.add("right error");
+							console.error(err);
+							const error = bubble();
+							error.classList.add("error");
+							error.classList.add("right");
                             error.innerHTML = `Error: The sesstion could not be created.`;
                          })
                     } else {
-                        const error = bubble();
-                        error.classList.add("right error");
-                        error.innerHTML = `Error: Gemini Nano is not suppoerted in this browser.`;
+						const error = bubble();
+						error.classList.add("error");
+						error.classList.add("right");
+						error.innerHTML = `Error: Gemini Nano is not suppoerted in this browser.`;
                     }
                     
                     if(session) {
