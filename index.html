@@ -113,11 +113,11 @@
 
             function append(input, outputStream) {
                 const ele1 = bubble();
-                ele1.classList.add("left");
+                ele1.classList.add("right");
                 ele1.innerText = input;
 
                 const ele2 = bubble();
-                ele2.classList.add("right");
+                ele2.classList.add("left");
                 ele2.innerText = "";
 
                 outputStream?.pipeTo(
@@ -148,13 +148,13 @@
 							console.error(err);
 							const error = bubble();
 							error.classList.add("error");
-							error.classList.add("right");
+							error.classList.add("left");
                             error.innerHTML = `Error: The sesstion could not be created.`;
                          })
                     } else if(!window.ai) {
 						const error = bubble();
 						error.classList.add("error");
-						error.classList.add("right");
+						error.classList.add("left");
 						error.innerHTML = `Error: Gemini Nano is not suppoerted in this browser.`;
                     }
                     
@@ -167,7 +167,7 @@
             });
 
             const intro = bubble();
-            intro.classList.add("right");
+            intro.classList.add("left");
             intro.innerHTML = `To get started:
               <br/>
               Enable Gemini Nano in Google Chrome (Canary). You need to be on version 128 of chrome or higher.
